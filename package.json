@@ -1,0 +1,19 @@
+{
+  "dependencies": {
+    "esm": "^3.2.25",
+    "google-translate-api": "^2.3.0",
+    "require": "^2.4.20",
+    "translate": "^1.2.3"
+  },
+  "name": "translator_inc",
+  "version": "0.0.1",
+  "main": "js",
+  "devDependencies": {},
+  "scripts": {
+    "start": "node .",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Aleksi Palin",
+  "license": "ISC",
+  "description": ""
+}

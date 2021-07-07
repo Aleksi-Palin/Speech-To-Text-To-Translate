@@ -1,0 +1,80 @@
+// get output div reference
+var output = document.getElementById("output");
+// get action element reference
+var action = document.getElementById("action");
+// new speech recognition object
+var SpeechRecognition = SpeechRecognition || webkitSpeechRecognition;
+var recognition = new SpeechRecognition();
+
+var average = 0;
+navigator.mediaDevices.getUserMedia({ audio: true})
+.then(function(stream) {
+  audioContext = new AudioContext();
+  analyser = audioContext.createAnalyser();
+  microphone = audioContext.createMediaStreamSource(stream);
+  javascriptNode = audioContext.createScriptProcessor(2048, 1, 1);
+
+  analyser.smoothingTimeConstant = 0.8;
+  analyser.fftSize = 1024;
+
+  microphone.connect(analyser);
+  analyser.connect(javascriptNode);
+  javascriptNode.connect(audioContext.destination);
+  javascriptNode.onaudioprocess = function() {
+      var array = new Uint8Array(analyser.frequencyBinCount);
+      analyser.getByteFrequencyData(array);
+      var values = 0;
+
+      var length = array.length;
+      for (var i = 0; i < length; i++) {
+        values += (array[i]);
+      }
+
+      average = values / length;
+
+    //console.log(Math.round(average));
+    // colorPids(average);
+    if(average > 1){
+        runSpeechRecognition();
+    }
+  }
+  })
+  .catch(function(err) {
+    /* handle the error */
+});
+
+
+function runSpeechRecognition() {
+    
+    // This runs when the speech recognition service starts
+    recognition.onstart = function() {
+        //action.innerHTML = "<small>listening...</small>";
+    };
+    
+    recognition.onspeechend = function() {
+        //action.innerHTML = "<small>stopped listening, hope you are done...</small>";
+        recognition.stop();
+    }
+  
+    // This runs when the speech recognition service returns result
+    recognition.onresult = function(event) {
+        var transcript = event.results[0][0].transcript;
+        var confidence = event.results[0][0].confidence;
+        
+        output.innerHTML = transcript;
+        
+        output.classList.remove("hide");
+    };
+  
+     // start recognition
+     
+    recognition.start();
+     
+     
+}
+
+
+
+// resource https://www.studytonight.com/post/javascript-speech-recognition-example-speech-to-text
+
+<script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
